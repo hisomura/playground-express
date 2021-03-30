@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8
+    entrypoint: docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: '${DB_DATABASE:-express}'
+      TZ: Asia/Tokyo
+    ports:
+      - '3306:3306'
