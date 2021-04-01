@@ -22,10 +22,13 @@
     "@types/rosie": "^0.0.38",
     "express": "^4.17.1",
     "rosie": "^2.1.0",
+    "sequelize": "^6.6.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
     "prettier": "^2.2.1"
   }
 }
