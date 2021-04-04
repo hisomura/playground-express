@@ -1,13 +1,9 @@
 {
-  "local": {
+  "test": {
     "dialect": "mysql",
     "username": "root",
     "password": null,
     "database": "express",
     "host": "127.0.0.1"
-  },
-  "test": {
-    "dialect": "sqlite",
-    "storage": "database.sqlite"
   }
 }
