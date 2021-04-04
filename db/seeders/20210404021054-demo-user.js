@@ -1,16 +1,12 @@
 "use strict";
+const userFactory = require("../factories/user").userFactory;
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert("Users", [
-      {
-        firstName: "John",
-        lastName: "Doe",
-        email: "example@example.com",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
+    return queryInterface.bulkInsert(
+      "Users",
+      [...Array(10)].map((_v) => userFactory.build())
+    );
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete("Users", null, {});
