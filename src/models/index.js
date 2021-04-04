@@ -7,6 +7,13 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../database.json')[env];
 const db = {};
+const cls = require('cls-hooked');
+
+const namespace = cls.createNamespace('express-sequelize-test');
+// Jest実行時jestがNODE_ENVをtestにする
+if (process.env.NODE_ENV === 'test') {
+  Sequelize.useCLS(namespace)
+}
 
 let sequelize;
 if (config.use_env_variable) {

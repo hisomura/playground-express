@@ -11,6 +11,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/users", async (req, res) => {
+  await User.create();
   const users = await User.findAll();
   res.send(users);
 });
