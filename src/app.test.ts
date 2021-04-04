@@ -11,7 +11,7 @@ describe("first express test", () => {
     expect(response.text).toBe("Hello, World!");
   });
 
-  test("/ return 'Hello, World!'", async () => {
+  test("/users return users data", async () => {
     sequelize.transaction(async (t: Transaction) => {
       const response = await request(app).get("/users");
       expect(response.status).toBe(200);
