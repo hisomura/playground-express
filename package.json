@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --forceExit",
+    "test-http": "jest --forceExit --runInBand"
   },
   "repository": {
     "type": "git",
