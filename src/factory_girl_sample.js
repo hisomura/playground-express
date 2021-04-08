@@ -32,28 +32,40 @@ const umzug = new Umzug({
   logging: console.log,
 });
 
+function factoryName(model, name = undefined) {
+  if (!name) return model.name
+
+  return `${model.name}:${name}`
+}
+
 (async () => {
   // checks migrations and run them if they are not already applied
   await umzug.up();
   console.log("All migrations performed successfully");
 })().then(async () => {
   factory.setAdapter(adapter);
-  factory.define("user", User, {
+  factory.define(factoryName(User, 'base'), User, {
     firstName: faker.name.firstName,
     lastName: faker.name.lastName,
     email: faker.internet.email,
+    posts: factory.assocMany(Post.name, 3, "id"),
   });
+  factory.extend(
+    factoryName(User, 'base'),
+    User.name,
+    {},
+    {
+      afterCreate: (model, attr, buildOptions) => {
+      },
+    }
+  );
 
-  factory.define("post", Post, {
-    userId: 1,
+  factory.define(Post.name, Post, {
+    userId: 0,
     title: faker.name.title,
     body: faker.lorem.paragraph,
   });
 
-  await factory.create("user");
-  const user = await User.findOne();
-  const post = await factory.create("post", { userId: user.id });
-  console.log(user, post);
-  console.log(await User.findAll());
-  console.log(await Post.findAll());
+  const user = await factory.create(User.name);
+  // const post = await factory.create("post", { userId: user.id });
 });
