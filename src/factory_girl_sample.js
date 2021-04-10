@@ -33,9 +33,9 @@ const umzug = new Umzug({
 });
 
 function factoryName(model, name = undefined) {
-  if (!name) return model.name
+  if (!name) return model.name;
 
-  return `${model.name}:${name}`
+  return `${model.name}:${name}`;
 }
 
 (async () => {
@@ -44,28 +44,49 @@ function factoryName(model, name = undefined) {
   console.log("All migrations performed successfully");
 })().then(async () => {
   factory.setAdapter(adapter);
-  factory.define(factoryName(User, 'base'), User, {
+  factory.define(factoryName(User, "base"), User, {
     firstName: faker.name.firstName,
     lastName: faker.name.lastName,
     email: faker.internet.email,
-    posts: factory.assocMany(Post.name, 3, "id"),
   });
   factory.extend(
-    factoryName(User, 'base'),
-    User.name,
+    factoryName(User, "base"),
+    factoryName(User, "default"),
     {},
     {
       afterCreate: (model, attr, buildOptions) => {
+        if (attr.posts) {
+          posts(model, attr, buildOptions);
+        } else {
+          factory.createMany(factoryName(Post, "base"), 3, {
+            userId: model.id,
+          });
+        }
+        return model;
       },
     }
   );
 
-  factory.define(Post.name, Post, {
+  factory.define(factoryName(Post, "base"), Post, {
     userId: 0,
     title: faker.name.title,
     body: faker.lorem.paragraph,
   });
 
-  const user = await factory.create(User.name);
+  const user = await factory.create(factoryName(User, "default"));
+  console.log(await user.getPosts());
+
+  const user2 = await factory.create(
+    factoryName(User, "default"),
+    {},
+    {
+      afterCreate: (model, attr, buildOptions) => {
+        factory.create(factoryName(Post, "base"), { userId: model.id });
+        return model;
+      },
+    }
+  );
+  console.log(user2);
+
   // const post = await factory.create("post", { userId: user.id });
 });
