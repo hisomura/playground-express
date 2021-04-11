@@ -10,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.User)
+      this.belongsTo(models.User, {
+        // https://sequelize.org/master/manual/assocs.html#customizing-the-foreign-key
+        // TODO 指定しなくて良いはずなのだけどなぜか動かなかった。そのうち調査する。
+        foreignKey: 'userId'
+      })
     }
   };
   Post.init({

@@ -32,61 +32,40 @@ const umzug = new Umzug({
   logging: console.log,
 });
 
-function factoryName(model, name = undefined) {
-  if (!name) return model.name;
-
-  return `${model.name}:${name}`;
-}
-
 (async () => {
   // checks migrations and run them if they are not already applied
   await umzug.up();
   console.log("All migrations performed successfully");
 })().then(async () => {
   factory.setAdapter(adapter);
-  factory.define(factoryName(User, "base"), User, {
+  factory.define(User.name, User, {
     firstName: faker.name.firstName,
     lastName: faker.name.lastName,
     email: faker.internet.email,
   });
-  factory.extend(
-    factoryName(User, "base"),
-    factoryName(User, "default"),
-    {},
-    {
-      afterCreate: (model, attr, buildOptions) => {
-        if (attr.posts) {
-          posts(model, attr, buildOptions);
-        } else {
-          factory.createMany(factoryName(Post, "base"), 3, {
-            userId: model.id,
-          });
-        }
-        return model;
-      },
-    }
-  );
 
-  factory.define(factoryName(Post, "base"), Post, {
-    userId: 0,
+  factory.define(Post.name, Post, {
+    userId: factory.assoc(User.name, "id"),
     title: faker.name.title,
     body: faker.lorem.paragraph,
   });
 
-  const user = await factory.create(factoryName(User, "default"));
-  console.log(await user.getPosts());
+  const post = await factory.create(Post.name);
+  const post2 = await factory.create(Post.name, {
+    userId: (
+      await factory.create(User.name, {
+        firstName: "Taro",
+        lastName: "Yamada",
+      })
+    ).id,
+  });
+  const post3 = await factory.create(Post.name, {
+    userId: (await post2.getUser()).id,
+  });
 
-  const user2 = await factory.create(
-    factoryName(User, "default"),
-    {},
-    {
-      afterCreate: (model, attr, buildOptions) => {
-        factory.create(factoryName(Post, "base"), { userId: model.id });
-        return model;
-      },
-    }
-  );
-  console.log(user2);
+  console.log(post);
+  console.log(post2);
+  console.log(post3);
 
-  // const post = await factory.create("post", { userId: user.id });
+  console.log(await User.findAll());
 });
