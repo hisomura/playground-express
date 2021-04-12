@@ -1,5 +1,6 @@
 import faker from "faker";
 import FactoryGirl, { factory } from "factory-girl";
+import { Post } from "./models_ts/Post";
 // @ts-ignore
 
 const adapter = new (require("factory-girl").SequelizeAdapter)();
@@ -40,6 +41,28 @@ const umzug = new Umzug({
     lastName: faker.name.lastName,
     email: faker.internet.email,
   });
+  factory.define(Post.name, Post, {
+    userId: factory.assoc(User.name, "id"),
+    title: faker.name.title,
+    body: faker.lorem.paragraph,
+  });
 
-  console.log(await factory.create(User.name));
+  const post = await factory.create<Post>(Post.name);
+  const post2 = await factory.create<Post>(Post.name, {
+    userId: (
+      await factory.create<User>(User.name, {
+        firstName: "Taro",
+        lastName: "Yamada",
+      })
+    ).id,
+  });
+  const post3 = await factory.create<Post>(Post.name, {
+    userId: (await post2.user).id,
+  });
+
+  console.log(post);
+  console.log(post2);
+  console.log(post3);
+
+  console.log(await User.findAll());
 });
