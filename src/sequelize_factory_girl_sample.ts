@@ -1,17 +1,14 @@
+import { factory } from "factory-girl";
 import faker from "faker";
-import FactoryGirl, { factory } from "factory-girl";
+import path from "path";
+
+import Sequelize from "sequelize";
+import Umzug from "umzug";
 import { Post } from "./models/Post";
-// @ts-ignore
+import { User } from "./models/User";
+import { sequelize } from "./sequelize";
 
 const adapter = new (require("factory-girl").SequelizeAdapter)();
-// const adapter = new FactoryGirl.SequelizeAdapter();
-
-import { sequelize } from "./sequelize";
-import { User } from "./models/User";
-
-const Sequelize = require("sequelize");
-const path = require("path");
-const Umzug = require("umzug");
 
 const umzug = new Umzug({
   migrations: {
