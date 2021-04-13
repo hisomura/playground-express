@@ -56,8 +56,9 @@ const umzug = new Umzug({
       })
     ).id,
   });
+
   const post3 = await factory.create<Post>(Post.name, {
-    userId: (await post2.user).id,
+    userId: (await post2.$get("user"))?.id,
   });
 
   console.log(post);

@@ -2,6 +2,7 @@ import {
   BelongsTo,
   Column,
   CreatedAt,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -11,6 +12,7 @@ import { User } from "./User";
 @Table
 export class Post extends Model<Post> {
   @Column
+  @ForeignKey(() => User)
   userId?: string;
 
   @Column
@@ -28,5 +30,5 @@ export class Post extends Model<Post> {
   updatedAt?: Date;
 
   @BelongsTo(() => User)
-  user!: User
+  user!: User;
 }
