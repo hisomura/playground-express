@@ -1,13 +1,13 @@
 import faker from "faker";
 import FactoryGirl, { factory } from "factory-girl";
-import { Post } from "./models_ts/Post";
+import { Post } from "./models/Post";
 // @ts-ignore
 
 const adapter = new (require("factory-girl").SequelizeAdapter)();
 // const adapter = new FactoryGirl.SequelizeAdapter();
 
 import { sequelize } from "./sequelize";
-import { User } from "./models_ts/User";
+import { User } from "./models/User";
 
 const Sequelize = require("sequelize");
 const path = require("path");

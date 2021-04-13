@@ -5,5 +5,5 @@ const config = require(__dirname + "/../database.json")[env];
 
 export const sequelize = new Sequelize({
   ...config,
-  models: [__dirname + "/models_ts"],
+  models: [__dirname + "/models"],
 });
