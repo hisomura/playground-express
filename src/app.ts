@@ -1,7 +1,5 @@
 import express from "express";
-// @ts-ignore
-// import User from "./models/user.js";
-import { User } from "./models";
+import { User } from "./models/User";
 
 export const app = express();
 const port = 3000;

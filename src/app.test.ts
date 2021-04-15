@@ -1,11 +1,17 @@
+import factory from "factory-girl";
 import request from "supertest";
 import { app, server } from "./app";
-// @ts-ignore
-import { sequelize, User } from "./models";
+
+import { User } from "./models/User";
 // @ts-ignore
 import { userFactory } from "../db/factories/user";
+import { migrate, setupFactories } from "./test-utils";
 
 describe("first express test", () => {
+  beforeAll(async () => {
+    await migrate();
+    await setupFactories();
+  });
   afterEach(async () => {
     // 全テーブル削除
     await User.destroy({ where: {} });
@@ -22,11 +28,9 @@ describe("first express test", () => {
 
   test("/users returns users data", async () => {
     const users = await Promise.all([
-      User.create(userFactory.build()),
-      User.create(userFactory.build()),
+      factory.create(User.name),
+      factory.create(User.name),
     ]);
-    // createdAt と updatedAt を丸めるために必要
-    users.forEach((user) => user.reload());
 
     const response = await request(app).get("/users");
     expect(response.body.length).toBe(2);
