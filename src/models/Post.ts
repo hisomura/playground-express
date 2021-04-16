@@ -10,7 +10,7 @@ import {
 import { User } from "./User";
 
 @Table
-export class Post extends Model<Post> {
+export class Post extends Model {
   @Column
   @ForeignKey(() => User)
   userId?: string;

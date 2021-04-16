@@ -1,11 +1,10 @@
 import axios from "axios";
 import factory from "factory-girl";
-import request from "supertest";
-import { app, server } from "./app";
-
-import { User } from "./models/User";
 // @ts-ignore
 import { userFactory } from "../db/factories/user";
+import { server } from "./app";
+
+import { User } from "./models/User";
 import { migrate, setupFactories } from "./test-utils";
 
 const client = axios.create({
@@ -39,6 +38,19 @@ describe("first express test", () => {
       const response = await client.get("/users");
       expect(response.data.length).toBe(2);
       expect(response.data).toEqual(JSON.parse(JSON.stringify(users)));
+    });
+
+    it("PUTリクエストでユーザーを作成する", async () => {
+      const response = await client.put("/users", {
+        firstName: "Taro",
+        lastName: "Yamada",
+      });
+      expect(response.status).toBe(200);
+      expect(response.data.firstName).toBe("Taro");
+
+      // 振る舞いのテストになってない気もする
+      const user = await User.findOne({ where: { firstName: "Taro" } });
+      expect(user?.lastName).toBe("Yamada");
     });
   });
 });
