@@ -3,9 +3,10 @@ import factory from "factory-girl";
 // @ts-ignore
 import { userFactory } from "../db/factories/user";
 import { server } from "./app";
-
 import { User } from "./models/User";
-import { migrate, setupFactories } from "./test-utils";
+
+import { sequelize } from "./sequelize";
+import { setupFactories } from "./test-utils";
 
 const client = axios.create({
   baseURL: `http://localhost:3000`,
@@ -15,12 +16,14 @@ const client = axios.create({
 
 describe("first express test", () => {
   beforeAll(async () => {
-    await migrate();
+    // await migrate();
+    // マイグレーション直接実行するより速い
+    await sequelize.sync()
     await setupFactories();
   });
   afterEach(async () => {
     // 全テーブル削除
-    await User.destroy({ where: {} });
+    await sequelize.truncate();
   });
   afterAll(async () => {
     server.close();
