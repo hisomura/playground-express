@@ -18,7 +18,7 @@ describe("first express test", () => {
   beforeAll(async () => {
     // await migrate();
     // マイグレーション直接実行するより速い
-    await sequelize.sync()
+    await sequelize.sync();
     await setupFactories();
   });
   afterEach(async () => {
@@ -54,6 +54,7 @@ describe("first express test", () => {
       expect(response.data[2].firstName).toEqual("Taro");
     });
 
+
     it("PUTリクエストでユーザーを作成する", async () => {
       const response = await client.put("/users", {
         firstName: "Taro",
@@ -66,5 +67,21 @@ describe("first express test", () => {
       const user = await User.findOne({ where: { firstName: "Taro" } });
       expect(user?.lastName).toBe("Yamada");
     });
+
+    describe("/users/:userId", () => {
+      it("GETリクエストで指定したユーザーの情報を返す", async () => {
+        const users = await factory.createMany<User>(User.name, 3);
+        const userId = users[1].id;
+        const response = await client.get(`/users/${userId}`);
+        expect(response.data.id).toBe(userId);
+      });
+      it("GETリクエストで存在しないユーザーを指定した場合空のオブジェクトを返す", async () => {
+        await factory.createMany<User>(User.name, 3);
+        const userId = 4294967295; // 32bit intの最大値
+        const response = await client.get(`/users/${userId}`);
+        expect(response.data).toEqual({});
+      });
+    });
+
   });
 });

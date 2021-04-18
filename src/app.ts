@@ -26,6 +26,16 @@ app.get("/users", async (req, res) => {
   res.send(users);
 });
 
+app.get("/users/:userId", async (req, res) => {
+  if (!req.params.userId) throw new Error("No userId");
+
+  const userId = parseInt(req.params.userId);
+  if (!userId) throw new Error();  // ユーザーIDは0以上なのでこれで良い
+
+  const users = await User.findByPk(userId);
+  res.send(users ?? {});
+});
+
 type UserPut = {
   firstName: string;
   lastName: string;
