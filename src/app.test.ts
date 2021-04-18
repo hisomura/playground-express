@@ -40,6 +40,17 @@ describe("first express test", () => {
       expect(response.data).toEqual(JSON.parse(JSON.stringify(users)));
     });
 
+    it("GETリクエストで指定したソート順でユーザーを返す", async () => {
+      await factory.create<User>(User.name, { firstName: "Taro" });
+      await factory.create<User>(User.name, { firstName: "Ichiro" });
+      await factory.create<User>(User.name, { firstName: "Jiro" });
+      const response = await client.get("/users?sort=firstName&direction=asc");
+      expect(response.data.length).toBe(3);
+      expect(response.data[0].firstName).toEqual("Ichiro");
+      expect(response.data[1].firstName).toEqual("Jiro");
+      expect(response.data[2].firstName).toEqual("Taro");
+    });
+
     it("PUTリクエストでユーザーを作成する", async () => {
       const response = await client.put("/users", {
         firstName: "Taro",

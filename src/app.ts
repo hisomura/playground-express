@@ -1,17 +1,28 @@
 import express from "express";
+import { FindOptions } from "sequelize";
 import { User } from "./models/User";
-import bodyParser from 'body-parser'
+import bodyParser from "body-parser";
 
 export const app = express();
 const port = 3000;
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
 
 app.get("/users", async (req, res) => {
-  const users = await User.findAll({ order: [["id", "asc"]] });
+  const options: FindOptions = {};
+  if (
+    ["id", "firstName", "lastName", "email", "createdAt", "updatedAt"].some(
+      (c) => c === req.query.sort
+    ) &&
+    ["asc", "desc"].some((d) => d === req.query.direction)
+  ) {
+    // @ts-ignore
+    options.order = [[req.query.sort, req.query.direction]];
+  }
+  const users = await User.findAll(options);
   res.send(users);
 });
 
@@ -30,7 +41,7 @@ app.put<UserPut>("/users", async (req, res) => {
     throw new Error();
   }
 
-  const values = { firstName, lastName }
+  const values = { firstName, lastName };
   const result = await User.create(values);
 
   res.send(result);
