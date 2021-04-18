@@ -1,5 +1,6 @@
 import express from "express";
 import { FindOptions } from "sequelize";
+import { Post } from "./models/Post";
 import { User } from "./models/User";
 import bodyParser from "body-parser";
 
@@ -24,6 +25,18 @@ app.get("/users", async (req, res) => {
   }
   const users = await User.findAll(options);
   res.send(users);
+});
+
+app.get("/users/:userId/posts", async (req, res) => {
+  if (!req.params.userId) throw new Error("No userId");
+
+  const userId = parseInt(req.params.userId);
+  if (!userId) throw new Error(`Wrong userId: ${req.params.userId}`); // ユーザーIDは0以上なのでこれで良い
+
+  const posts = await Post.findAll({
+    where: { userId },
+  });
+  res.send(posts ?? {});
 });
 
 app.get("/users/:userId", async (req, res) => {

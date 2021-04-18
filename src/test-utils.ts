@@ -40,6 +40,6 @@ export const setupFactories = async () => {
   factory.define(Post.name, Post, {
     userId: factory.assoc(User.name, "id"),
     title: faker.name.title,
-    body: faker.lorem.paragraph,
+    body: faker.lorem.paragraph.bind(255), // mysqlでTEXTフィールドが作成されない問題への対策
   });
 };

@@ -3,6 +3,7 @@ import factory from "factory-girl";
 // @ts-ignore
 import { userFactory } from "../db/factories/user";
 import { server } from "./app";
+import { Post } from "./models/Post";
 import { User } from "./models/User";
 
 import { sequelize } from "./sequelize";
@@ -26,6 +27,7 @@ describe("first express test", () => {
     await sequelize.truncate();
   });
   afterAll(async () => {
+    await sequelize.drop();
     server.close();
   });
 
@@ -53,7 +55,6 @@ describe("first express test", () => {
       expect(response.data[1].firstName).toEqual("Jiro");
       expect(response.data[2].firstName).toEqual("Taro");
     });
-
 
     it("PUTリクエストでユーザーを作成する", async () => {
       const response = await client.put("/users", {
@@ -83,5 +84,19 @@ describe("first express test", () => {
       });
     });
 
+    describe("/users/:userId/posts", () => {
+      it("GETリクエストで指定したユーザーの投稿を全て返す", async () => {
+        await factory.createMany(Post.name, 2);
+        const user = await factory.create<User>(User.name);
+        await factory.createMany<Post>(Post.name, 3, {
+          userId: user.id,
+        });
+        const response = await client.get(`/users/${user.id}/posts`);
+        expect(response.data.length).toBe(3);
+        expect(response.data[0].userId).toEqual(user.id);
+        expect(response.data[1].userId).toEqual(user.id);
+        expect(response.data[2].userId).toEqual(user.id);
+      });
+    });
   });
 });
