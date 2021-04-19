@@ -1,5 +1,5 @@
 {
-  "mysql": {
+  "test": {
     "dialect": "mysql",
     "username": "root",
     "password": null,
@@ -7,7 +7,7 @@
     "host": "127.0.0.1"
   },
 
-  "test": {
+  "sqlite": {
     "dialect": "sqlite",
     "storage": ":memory:"
   }
