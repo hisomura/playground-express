@@ -1,11 +1,15 @@
+import bodyParser from "body-parser";
 import express from "express";
+import morgan from "morgan";
 import { FindOptions } from "sequelize";
 import { Post } from "./models/Post";
 import { User } from "./models/User";
-import bodyParser from "body-parser";
 
 export const app = express();
 const port = 3000;
+app.use(morgan('dev', {
+  skip: function (req, res) { return res.statusCode < 400 }
+}))
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
