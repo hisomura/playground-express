@@ -19,14 +19,18 @@ describe("first express test", () => {
   beforeAll(async () => {
     // await migrate();
     // マイグレーション直接実行するより速い
-    if ("mysql" === sequelize.getDialect()) {
-      await sequelize.query('SET GLOBAL FOREIGN_KEY_CHECKS = 0')
-    }
     await sequelize.sync({ force: true });
     await setupFactories();
   });
   afterEach(async () => {
     // 全テーブル削除
+    if ("mysql" === sequelize.getDialect()) {
+      await sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
+      await sequelize.truncate();
+      await sequelize.query('SET FOREIGN_KEY_CHECKS = 1')
+      return;
+    }
+
     await sequelize.truncate();
   });
   afterAll(async () => {
